@@ -52,7 +52,6 @@ class GoogleAnalyticsHook(BaseHook):
                                 version='v3',
                                 scopes=['https://www.googleapis.com/auth/analytics'])
     }
-    _key_folder = os.path.join(conf.get('core', 'airflow_home'), 'keys')
 
     def __init__(self, google_analytics_conn_id='google_analytics_default', key_file=None):
         self.google_analytics_conn_id = google_analytics_conn_id
@@ -60,7 +59,7 @@ class GoogleAnalyticsHook(BaseHook):
         if 'client_secrets' in self.connection.extra_dejson:
             self.client_secrets = self.connection.extra_dejson['client_secrets']
         if key_file:
-            self.file_location = os.path.join(GoogleAnalyticsHook._key_folder, key_file)
+            self.file_location = key_file
 
     def get_service_object(self, name):
         service = GoogleAnalyticsHook._services[name]
