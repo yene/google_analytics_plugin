@@ -9,21 +9,11 @@ If you don't have an OAUTH token, you may authenticate by passing a
 object will expect the following fields and use them to generate an OAUTH token
 on execution.
 
-"type": "service_account",
-"project_id": "example-project-id",
-"private_key_id": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-"private_key": "-----BEGIN PRIVATE KEY-----\nXXXXX\n-----END PRIVATE KEY-----\n",
-"client_email": "google-analytics@{PROJECT_ID}.iam.gserviceaccount.com",
-"client_id": "XXXXXXXXXXXXXXXXXXXXXX",
-"auth_uri": "https://accounts.google.com/o/oauth2/auth",
-"token_uri": "https://accounts.google.com/o/oauth2/token",
-"auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-"client_x509_cert_url": "{CERT_URL}"
 
-In Airflow 1.9.0 this requires to use the web interface or cli to set connection extra's. If you prefer to not use the
-web interface to manage connections you can also supply the key as a json file.
+You can place the google api key directy in the extra field:
+GOOGLE_API_KEY_JSON=$(<google-api-key.json)
+airflow connections -a --conn_id "google_analytics_default" --conn_type="google_analytics" --conn_login "[view_id]" --conn_extra "$GOOGLE_API_KEY_JSON"
 
-@TODO: add support for p12 keys
 
 More details can be found here:
 https://developers.google.com/api-client-library/python/guide/aaa_client_secrets
@@ -56,8 +46,8 @@ class GoogleAnalyticsHook(BaseHook):
     def __init__(self, google_analytics_conn_id='google_analytics_default', key_file=None):
         self.google_analytics_conn_id = google_analytics_conn_id
         self.connection = self.get_connection(google_analytics_conn_id)
-        if 'client_secrets' in self.connection.extra_dejson:
-            self.client_secrets = self.connection.extra_dejson['client_secrets']
+        if 'client_id' in self.connection.extra_dejson:
+            self.client_secrets = self.connection.extra_dejson
         if key_file:
             self.file_location = key_file
 
